@@ -1,4 +1,4 @@
-# Define a list of packages with their Package IDs and target versions
+# Define a list of packages with their Package IDs and current version and updates if below target vesision
 $Packages = @(
     @{
         PackageID = "HEVC Video Extensions from Device Manufacturer";  # Example Package ID
