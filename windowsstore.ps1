@@ -1,3 +1,6 @@
+# Set the base path for downloads
+$DownloadPath = "C:\Support\Store"
+
 # Define a list of packages with their Package IDs and current version and updates if below target vesision
 $Packages = @(
     @{
@@ -63,9 +66,9 @@ function Download-AppxPackage {
 }
 
 # Ensure the download directory exists
-if (-Not (Test-Path "C:\Support\Store")) {
-    Write-Host -ForegroundColor Green "Creating directory C:\Support\Store"
-    New-Item -ItemType Directory -Force -Path "C:\Support\Store"
+if (-Not (Test-Path $DownloadPath)) {
+    Write-Host -ForegroundColor Green "Creating directory $DownloadPath"
+    New-Item -ItemType Directory -Force -Path $DownloadPath
 }
 
 
@@ -94,13 +97,13 @@ foreach ($Package in $Packages) {
         if ([version]$InstalledVersion -lt [version]$TargetVersion) {
             Write-Output "Update Required: Installed Version ($InstalledVersion) < Target Version ($TargetVersion)"
             Write-Output "Downloading and updating $Name..."
-            Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
+            Download-AppxPackage -Uri $StoreUrl -Path $DownloadPath
         } else {
             Write-Output "The app $Name is up-to-date: Version $InstalledVersion"
         }
     } else {
         # If the app is not installed, download and install it
         Write-Output "App with Package ID '$Name' is not installed. Installing..."
-        Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
+        Download-AppxPackage -Uri $StoreUrl -Path $DownloadPath
     }
 }
