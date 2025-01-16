@@ -81,18 +81,23 @@ foreach ($Package in $Packages) {
 
     if ($AppPackage) {
         # If installed, get the current version
-        $InstalledVersion = $AppPackage.Version
+        $versions = $AppPackage.Version -split ' ' 
+        if ($version.count -gt 1 ) {
+            $versions = $versions | Sort-Object {[Version]$_} -Descending
+        }   
+     
+        $InstalledVersion = $versions[0]
         Write-Output "App Found: $Name"
         Write-Output "Installed Version: $InstalledVersion"
 
         # Compare installed version with the target version
-        #if ([version]$InstalledVersion -lt [version]$TargetVersion) {
-        #    Write-Output "Update Required: Installed Version ($InstalledVersion) < Target Version ($TargetVersion)"
-        #    Write-Output "Downloading and updating $Name..."
-        #    Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
-        #} else {
-        #    Write-Output "The app $Name is up-to-date: Version $InstalledVersion"
-        #}
+        if ([version]$InstalledVersion -lt [version]$TargetVersion) {
+            Write-Output "Update Required: Installed Version ($InstalledVersion) < Target Version ($TargetVersion)"
+            Write-Output "Downloading and updating $Name..."
+            Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
+        } else {
+            Write-Output "The app $Name is up-to-date: Version $InstalledVersion"
+        }
     } else {
         # If the app is not installed, download and install it
         Write-Output "App with Package ID '$Name' is not installed. Installing..."
