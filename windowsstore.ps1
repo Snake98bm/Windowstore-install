@@ -1,18 +1,17 @@
 # Define a list of packages with their Package IDs and current version and updates if below target vesision
 $Packages = @(
     @{
-        PackageID = "HEVC Video Extensions from Device Manufacturer";  # Example Package ID
+        Name = "Microsoft.HEVCVideoExtension"
         TargetVersion = "2.2.9.0";              # Desired version
         StoreUrl = "https://apps.microsoft.com/detail/9n4wgh0z6vhq?hl=en-US&gl=US"  # Store URL for download
     },
     @{
-        PackageID = "HEIF Image Extensions";
-        TargetVersion = "1.2.3.70";
+        Name = "Microsoft.HEIFImageExtension"
+        TargetVersion = "1.2.3.0";
         StoreUrl = "https://apps.microsoft.com/detail/9pmmsr1cgpwg"
     }
     # Add more packages as needed
 )
-
 
 # Define the Download-AppxPackage function
 function Download-AppxPackage {
@@ -73,30 +72,30 @@ if (-Not (Test-Path "C:\Support\Store")) {
 
 # Loop through each package
 foreach ($Package in $Packages) {
-    $PackageID = $Package.PackageID
+    $Name = $Package.Name
     $TargetVersion = $Package.TargetVersion
     $StoreUrl = $Package.StoreUrl
 
     # Check if the app is installed
-    $AppPackage = Get-AppxPackage | Where-Object { $_.PackageFullName -like "*$PackageID*" }
+    $AppPackage = Get-AppxPackage | Where-Object { $_.Name -like "*$Name*" }
 
     if ($AppPackage) {
         # If installed, get the current version
         $InstalledVersion = $AppPackage.Version
-        Write-Output "App Found: $PackageID"
+        Write-Output "App Found: $Name"
         Write-Output "Installed Version: $InstalledVersion"
 
         # Compare installed version with the target version
-        if ([version]$InstalledVersion -lt [version]$TargetVersion) {
-            Write-Output "Update Required: Installed Version ($InstalledVersion) < Target Version ($TargetVersion)"
-            Write-Output "Downloading and updating $PackageID..."
-            Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
-        } else {
-            Write-Output "The app $PackageID is up-to-date: Version $InstalledVersion"
-        }
+        #if ([version]$InstalledVersion -lt [version]$TargetVersion) {
+        #    Write-Output "Update Required: Installed Version ($InstalledVersion) < Target Version ($TargetVersion)"
+        #    Write-Output "Downloading and updating $Name..."
+        #    Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
+        #} else {
+        #    Write-Output "The app $Name is up-to-date: Version $InstalledVersion"
+        #}
     } else {
         # If the app is not installed, download and install it
-        Write-Output "App with Package ID '$PackageID' is not installed. Installing..."
+        Write-Output "App with Package ID '$Name' is not installed. Installing..."
         Download-AppxPackage -Uri $StoreUrl -Path "C:\Support\Store"
     }
 }
